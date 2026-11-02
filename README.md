@@ -34,7 +34,9 @@ Describe **what** you want — not which rules to follow. Your `CLAUDE.md` / `AG
 
 **Skills are loaded by the agents, not by you.** The orchestrator maps each task to skills (an order form → `crud-form` + `document-lines`), builders read them before writing code, the reviewer runs their audit tables, the e2e writer uses `e2e-crud` and regenerates the testers' PDF (`test-docs`) whenever test cases change. Skills: `crud-list`, `crud-form`, `document-lines`, `bulk-actions`, `filters`, `dashboard-charts`, `master-detail-tabs`, `export-print`, `e2e-crud`, `test-docs`. Calling one by hand (`/vlasnacrm-agents:<skill> <task>`) is only for one-off tasks outside the pipeline.
 
-**Tests:** e2e and visual QA run only against a test environment (local stack or a separate test DB), never production. For logged-in screens set `E2E_EMAIL` / `E2E_PASSWORD` (e2e) and `VLASNACRM_QA_EMAIL` / `VLASNACRM_QA_PASSWORD` (visual QA).
+**Tests:** e2e and visual QA run against a test environment (local stack or a separate test DB). For logged-in screens set `E2E_EMAIL` / `E2E_PASSWORD` (e2e) and `VLASNACRM_QA_EMAIL` / `VLASNACRM_QA_PASSWORD` (visual QA). Test data never stays behind: every record the dedicated e2e account creates is tracked and deleted after the run, and the run fails if anything is left (`e2e_cleanup` / `e2e_residue`).
+
+**Bug fixes on production:** every fix gets a `@regression` test — a DB test that always rolls back when the database decides the bug, a UI test otherwise. With `"e2e": { "prod": true }` in `.vlasnacrm/policy.json`, tests tagged `@prod-safe` can prove a hotfix on production with zero residue: `E2E_TARGET=prod E2E_ALLOW_PROD=1 npx playwright test --grep @prod-safe`. Agents never set `E2E_ALLOW_PROD` themselves. Details: `skills/e2e-crud` → *Bug-fix verification on production*.
 
 ## Structure
 

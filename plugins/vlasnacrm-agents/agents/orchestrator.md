@@ -70,7 +70,7 @@ They live in `.vlasnacrm/` at the project root — **not** under `.claude/`: Cla
   "data": { "supabaseKeys": "env" },  // "inline" — public URL + publishable key inlined in the client file
   "seo": { "enabled": false },        // true
   "qa": { "enabled": true, "blocking": false },  // visual QA; viewports/dark/loginPath optional (see visual-qa)
-  "e2e": { "enabled": true, "required": false, "docs": true }  // e2e-writer after the reviewer; required = reviewer blocks features without tests; docs = regenerate the testers' PDF when test cases change
+  "e2e": { "enabled": true, "required": false, "docs": true, "prod": false }  // e2e-writer after the reviewer; required = reviewer blocks features without tests; docs = regenerate the testers' PDF when test cases change; prod = @prod-safe regression tests may verify bug fixes on production (rollback DB tests / ledger cleanup, zero residue) — set only on the user's explicit request
 }
 ```
 
@@ -283,8 +283,10 @@ Every bug fix — reported by QA, the client, a user or found by an agent — sh
 2. The owning agent fixes the code (for a pattern-wide bug: the Consistency Rule).
 3. The regression test passes, plus the module's other tests.
 4. Title = the correct behaviour in the UI language, tag `@regression`, annotation `bug: "<ticket>: <what was wrong>"`.
+5. Test data leaves nothing behind: DB-level bugs → a DB test that always rolls back; UI tests → per-test cleanup + global sweep + residue check (`e2e-crud` → *Test data lifecycle*). A run with residue is a failed run.
+6. Fix shipped straight to production, or a bug that only shows on production data: with `policy.e2e.prod: true` the `@prod-safe` regression test verifies it on production — run by the user (`E2E_ALLOW_PROD=1`) or on their explicit go-ahead in this conversation, never on the agents' own initiative. The summary states the result and «residue 0».
 
-A fix without its regression test is not done; the only exception is a bug that can't be observed end-to-end — then the closest visible-symptom check and an explicit note in the summary. After test cases change, the e2e-writer regenerates the testers' document (`test-docs`) itself; mention its path in the summary.
+A fix without its regression test is not done; a pure data/SQL bug is covered by a DB test. The only exception is a bug in an external system — then the closest visible-symptom check and an explicit note in the summary. After test cases change, the e2e-writer regenerates the testers' document (`test-docs`) itself; mention its path in the summary.
 
 ## When NOT to Build
 
