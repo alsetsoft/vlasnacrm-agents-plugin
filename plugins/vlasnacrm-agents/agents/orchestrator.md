@@ -178,6 +178,7 @@ Users experience the app as one product: the same kind of thing must look and be
 |---------|-----------------------------------|
 | Archived / inactive records | hidden by default; how they're labelled; offered in new selections or not; how filters show them; where they sort |
 | Picking a related record (customer, product, sample, employee…) | one picker per entity type: search fields, row layout, match highlight, extra context (live quantity / availability / status badge), "load more" |
+| Adding lines to a document (order, invoice, receipt, return…) | one toolbar ABOVE the lines table with fixed slots (bulk line actions · add field · tax/doc actions), one add field, one label naming every search criterion, one empty-state text — never a trailing "add" row in some documents (skill `document-lines` → *Lines toolbar*) |
 | Quantities, money, numbers, dates | one formatter/input per kind: precision, units/currency, negative handling, empty value, locale |
 | Status | one badge component, one color source, one label set |
 | Destructive / irreversible actions | same confirm dialog, wording, button placement |
