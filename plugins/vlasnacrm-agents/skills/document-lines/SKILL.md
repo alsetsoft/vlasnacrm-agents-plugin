@@ -56,13 +56,13 @@ Users add lines dozens of times a day; if the field moves between documents (abo
 - **One shared component** for the row above every lines table (e.g. `DocumentItemsToolbar`) with fixed slots, so the order cannot drift:
   `[start: line count · bulk line actions (reprice…)] [add: the add field] ··· [end, pushed right: tax toggles, document-level line actions]`.
   Root `flex flex-wrap items-center gap-2`; `end` has `ml-auto`. The lines table follows directly below.
-- **One add field** (e.g. `AddItemField`) wrapping the shared entity picker: `h-8`, `min-w-64 max-w-xl flex-1`, value always empty (pick = append a line, field resets), optional "+" on its left for an empty/manual line where the document allows one.
+- **One add field** (e.g. `AddItemField`) wrapping the shared entity picker: `h-8`, `min-w-[min(27rem,100%)] max-w-xl flex-1` (wide enough to show the whole label), value always empty (pick = append a line, field resets), optional "+" on its left for an empty/manual line where the document allows one.
 - **Why above, not a trailing row:** it stays visible at any number of lines (no scrolling to the bottom of a 50-line document), sits next to the other line actions, and works the same on an empty document.
 - **One label constant** shared by all documents, saying *line/item* (it adds products, services and bundles alike — not "product") and listing **every** search criterion the picker really supports, e.g. `"Add item — name, code, SKU or barcode…"` (localized). Never a per-document placeholder.
 - **One search behaviour:** the same server search everywhere (all words across name/code/SKU + exact barcode). If the label lists a criterion, every document's search must honour it — test it.
 - **Empty state** of the lines table points to the field: `"No items yet — add them with the «Add item» field above"` (one constant).
 - **Variants keep the slot:** a restricted add (e.g. "Add a line from the source receipt" on a return) renders in the same `add` slot; read-only documents omit `add` but keep the toolbar.
-- **Narrow windows:** the toolbar wraps, the field never shrinks below 16rem, no horizontal page scroll at 1024 px.
+- **Narrow windows:** the toolbar wraps — the right-side actions move to the next line rather than truncating the field label; no horizontal page scroll at 1024 px.
 - **Regression test** (e2e, no save): for every document route — the field is visible above the empty-state text, has the shared label, finds one known item by name, code, SKU and barcode, picking adds a line, no horizontal overflow at 1024 px.
 
 ## Snapshot semantics
